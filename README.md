@@ -1,5 +1,5 @@
 # 概要
-Switch Final Fantagy Pixel Remasterのセーブデータ編集Tool
+Switch Final Fantasy Pixel Remasterのセーブデータ編集Tool
 
 # Portal
 https://www.jp.square-enix.com/ff_pixelremaster/
