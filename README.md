@@ -1,6 +1,9 @@
 # 概要
 Switch Final Fantasy Pixel Remasterのセーブデータ編集Tool
 
+# Sample
+<img src="https://user-images.githubusercontent.com/30800900/233803864-fd8ee9ec-a5ba-4b64-a55e-405378c5b153.png"/>
+
 # Portal
 https://www.jp.square-enix.com/ff_pixelremaster/
 
