@@ -12,15 +12,16 @@ namespace FFPixelRemaster
 		public CommandAction FileSaveCommand { get; set; }
 		public CommandAction FileImportCommand { get; set; }
 		public CommandAction FileExportCommand { get; set; }
+		public CommandAction ItemAppendCommand { get; set; }
 
-		private FFSaveData? mFFSave;
-		public FFSaveData? FFSave
+		private FFSaveData? mSaveData;
+		public FFSaveData? SaveData
 		{
-			get { return mFFSave; }
+			get { return mSaveData; }
 			set
 			{
-				mFFSave = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FFSave)));
+				mSaveData = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SaveData)));
 			}
 		}
 		private String mFilename = "";
@@ -33,6 +34,7 @@ namespace FFPixelRemaster
 			FileSaveCommand = new CommandAction(FileSave);
 			FileImportCommand = new CommandAction(FileImport);
 			FileExportCommand = new CommandAction(FileExport);
+			ItemAppendCommand = new CommandAction(ItemAppend);
 		}
 
 		private void FileOpen(object? obj)
@@ -40,41 +42,57 @@ namespace FFPixelRemaster
 			var dlg = new OpenFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
-			var json = SaveData.Open(dlg.FileName);
+			var json = FFPixelRemaster.SaveData.Open(dlg.FileName);
 			var ff = new FF6SaveData();
 			if (!ff.Open(json)) return;
 
 			mFilename = dlg.FileName;
-			FFSave = ff;
+			SaveData = ff;
 			MessageBox.Show("success");
 		}
 
 		private void FileSave(object? obj)
 		{
-			if (FFSave == null) return;
+			if (SaveData == null) return;
 
-			SaveData.Save(mFilename, FFSave.Save());
+            FFPixelRemaster.SaveData.Save(mFilename, SaveData.Save());
 		}
 
 		private void FileImport(object? obj)
 		{
-			if (FFSave == null) return;
+			if (SaveData == null) return;
 
 			var dlg = new OpenFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
 			if (!File.Exists(dlg.FileName)) return;
-			FFSave.Open(File.ReadAllText(dlg.FileName));
+			SaveData.Open(File.ReadAllText(dlg.FileName));
 		}
 
 		private void FileExport(object? obj)
 		{
-			if (FFSave == null) return;
+			if (SaveData == null) return;
 
 			var dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
-			File.WriteAllText(dlg.FileName, FFSave.Save());
+			File.WriteAllText(dlg.FileName, SaveData.Save());
+		}
+
+		private void ItemAppend(object? obj)
+		{
+			String type = (obj as String) ?? "";
+
+			var user = (SaveData as FF6SaveData)?.UserData;
+			var items = user?.NormalItem.Items;
+			switch(type)
+			{
+				case "important":
+					items = user?.ImportantItem.Items;
+					break;
+			}
+
+			items?.Add(new FF6Item() { Count = 1, ID = 2 });
 		}
 	}
 }

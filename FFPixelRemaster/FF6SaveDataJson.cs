@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -102,7 +103,7 @@ namespace FFPixelRemaster
 		public List<String> TargetString { get; set; }
 
 		[JsonIgnore]
-		public List<FF6Item> Items { get; set; } = new List<FF6Item>();
+		public ObservableCollection<FF6Item> Items { get; set; } = new ObservableCollection<FF6Item>();
 
 		public void Deserialize()
 		{
