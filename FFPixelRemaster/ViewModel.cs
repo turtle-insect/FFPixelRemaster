@@ -1,16 +1,31 @@
 ﻿using Microsoft.Win32;
+using System;
+using System.ComponentModel;
+using System.IO;
 using System.Windows;
 
 namespace FFPixelRemaster
 {
-	internal class ViewModel
+	internal class ViewModel : INotifyPropertyChanged
 	{
 		public CommandAction FileOpenCommand { get; set; }
 		public CommandAction FileSaveCommand { get; set; }
 		public CommandAction FileImportCommand { get; set; }
 		public CommandAction FileExportCommand { get; set; }
 
-		private SaveData mSaveData = new SaveData();
+		private FFSaveData? mFFSave;
+		public FFSaveData? FFSave
+		{
+			get { return mFFSave; }
+			set
+			{
+				mFFSave = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FFSave)));
+			}
+		}
+		private String mFilename = "";
+
+		public event PropertyChangedEventHandler? PropertyChanged;
 
 		public ViewModel()
 		{
@@ -25,28 +40,41 @@ namespace FFPixelRemaster
 			var dlg = new OpenFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
-			MessageBox.Show(mSaveData.Open(dlg.FileName) ? "success" : "fail");
+			var json = SaveData.Open(dlg.FileName);
+			var ff = new FF6SaveData();
+			if (!ff.Open(json)) return;
+
+			mFilename = dlg.FileName;
+			FFSave = ff;
+			MessageBox.Show("success");
 		}
 
 		private void FileSave(object? obj)
 		{
-			mSaveData.Save();
+			if (FFSave == null) return;
+
+			SaveData.Save(mFilename, FFSave.Save());
 		}
 
 		private void FileImport(object? obj)
 		{
+			if (FFSave == null) return;
+
 			var dlg = new OpenFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
-			mSaveData.Import(dlg.FileName);
+			if (!File.Exists(dlg.FileName)) return;
+			FFSave.Open(File.ReadAllText(dlg.FileName));
 		}
 
 		private void FileExport(object? obj)
 		{
+			if (FFSave == null) return;
+
 			var dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == false) return;
 
-			mSaveData.Export(dlg.FileName);
+			File.WriteAllText(dlg.FileName, FFSave.Save());
 		}
 	}
 }

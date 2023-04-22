@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FFPixelRemaster"
         mc:Ignorable="d"
 		WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="400" Width="600">
+        Title="Switch Final Fantasy Pixel Remaster SaveDate Editor" Height="400" Width="600">
 	<Window.DataContext>
 		<local:ViewModel/>
 	</Window.DataContext>
@@ -26,7 +26,59 @@
 			</ComboBox>
 		</ToolBar>
 		<TabControl>
-			
+			<TabItem Header="Basic">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition/>
+						<RowDefinition Height="8*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="5"/>
+						<ColumnDefinition/>
+						<ColumnDefinition/>
+					</Grid.ColumnDefinitions>
+					<Label Content="Gil"/>
+					<TextBox Grid.Column="1" Text="{Binding FFSave.UserData.Gil,UpdateSourceTrigger=PropertyChanged}"/>
+					<Image Grid.Column="3" Grid.Row="4" Grid.ColumnSpan="2" Source="{Binding FFSave.Thumbnail}"/>
+				</Grid>
+			</TabItem>
+			<TabItem Header="Item">
+				<TabControl>
+					<TabItem Header="Normal">
+						<ListBox ItemsSource="{Binding FFSave.UserData.NormalItem.Items}">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Label Content="Count"/>
+										<TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+										<Label Content="ID"/>
+										<TextBox Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+									</StackPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</TabItem>
+					<TabItem Header="Important">
+						<ListBox ItemsSource="{Binding FFSave.UserData.ImportantItem.Items}">
+							<ListBox.ItemTemplate>
+								<DataTemplate>
+									<StackPanel Orientation="Horizontal">
+										<Label Content="Count"/>
+										<TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
+										<Label Content="ID"/>
+										<TextBox Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+									</StackPanel>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
+						</ListBox>
+					</TabItem>
+				</TabControl>
+			</TabItem>
 		</TabControl>
 	</DockPanel>
 </Window>

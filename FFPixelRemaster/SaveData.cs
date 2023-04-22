@@ -12,18 +12,13 @@ namespace FFPixelRemaster
 {
 	internal class SaveData
 	{
-		const String mPassword = "TKX73OHHK1qMonoICbpVT0hIDGe7SkW0";
-		const String mSalt = "71Ba2p0ULBGaE6oJ7TjCqwsls1jBKmRL";
-
-		private String mJson = "";
-		private String mFileName = "";
-		public bool Open(String filename)
+		public static String Open(String filename)
 		{
-			if (!File.Exists(filename)) return false;
+			if (!File.Exists(filename)) return "";
 
 			var buffer = File.ReadAllBytes(filename);
 			buffer = Crypt(false, buffer);
-			if (buffer.Length == 0) return false;
+			if (buffer.Length == 0) return "";
 
 			using var ds = new DeflateStream(new MemoryStream(buffer), CompressionMode.Decompress);
 			using var ms = new MemoryStream();
@@ -33,20 +28,18 @@ namespace FFPixelRemaster
 			}
 			catch
 			{
-				return false;
+				return "";
 			}
 
-			mJson = Encoding.UTF8.GetString(ms.ToArray());
-			mFileName = filename;
-			return true;
+			return Encoding.UTF8.GetString(ms.ToArray());
 		}
 
-		public void Save()
+		public static void Save(String filename, String json)
 		{
-			if (String.IsNullOrEmpty(mFileName)) return;
-			if (String.IsNullOrEmpty(mJson)) return;
+			if (String.IsNullOrEmpty(filename)) return;
+			if (String.IsNullOrEmpty(json)) return;
 
-			using var input = new MemoryStream(Encoding.UTF8.GetBytes(mJson));
+			using var input = new MemoryStream(Encoding.UTF8.GetBytes(json));
 			using var ms = new MemoryStream();
 			using var ds = new DeflateStream(ms, CompressionMode.Compress);
 			try
@@ -62,29 +55,13 @@ namespace FFPixelRemaster
 			var buffer = Crypt(true, ms.ToArray());
 			if (buffer.Length == 0) return;
 
-			File.WriteAllBytes(mFileName, buffer);
+			File.WriteAllBytes(filename, buffer);
 		}
 
-		public void Import(String filename)
+		private static Byte[] Crypt(bool isEncryption, Byte[] input)
 		{
-			if (String.IsNullOrEmpty(mFileName)) return;
-			if (!File.Exists(filename)) return;
-
-			mJson = File.ReadAllText(filename);
-		}
-
-		public void Export(String filename)
-		{
-			if (String.IsNullOrEmpty(mFileName)) return;
-			if (String.IsNullOrEmpty(mJson)) return;
-
-			File.WriteAllText(filename, mJson);
-		}
-
-		private Byte[] Crypt(bool isEncryption, Byte[] input)
-		{
-			Byte[] saltByte = Encoding.UTF8.GetBytes(mSalt);
-			using var generator = new Rfc2898DeriveBytes(mPassword, saltByte, 10, HashAlgorithmName.SHA1);
+			Byte[] saltByte = Encoding.UTF8.GetBytes("71Ba2p0ULBGaE6oJ7TjCqwsls1jBKmRL");
+			using var generator = new Rfc2898DeriveBytes("TKX73OHHK1qMonoICbpVT0hIDGe7SkW0", saltByte, 10, HashAlgorithmName.SHA1);
 
 			var blockCipher = new CbcBlockCipher(new RijndaelEngine(256));
 			var cipher = new PaddedBufferedBlockCipher(blockCipher, new ZeroBytePadding());
