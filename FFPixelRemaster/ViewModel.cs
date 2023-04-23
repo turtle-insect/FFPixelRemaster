@@ -14,8 +14,8 @@ namespace FFPixelRemaster
 		public CommandAction FileExportCommand { get; set; }
 		public CommandAction ItemAppendCommand { get; set; }
 
-		private FFSaveData? mSaveData;
-		public FFSaveData? SaveData
+		private FF6SaveData? mSaveData;
+		public FF6SaveData? SaveData
 		{
 			get { return mSaveData; }
 			set
@@ -84,15 +84,15 @@ namespace FFPixelRemaster
 			String type = (obj as String) ?? "";
 
 			var user = (SaveData as FF6SaveData)?.UserData;
-			var items = user?.NormalItem.Items;
+			var targets = user?.NormalItems.Targets;
 			switch(type)
 			{
 				case "important":
-					items = user?.ImportantItem.Items;
+					targets = user?.ImportantItems.Targets;
 					break;
 			}
 
-			items?.Add(new FF6Item() { Count = 1, ID = 2 });
+			targets?.Add(new FF6Item() { Count = 1, ID = 2 });
 		}
 	}
 }

@@ -69,31 +69,95 @@ namespace FFPixelRemaster
 		public String ImportantItemString { get; set; }
 
 		[JsonIgnore]
-		public FF6Items ImportantItem { get; set; }
+		public FF6Items ImportantItems { get; set; }
 
 		[JsonPropertyName("normalOwnedItemList")]
 		public String NormalItemString { get; set; }
 
 		[JsonIgnore]
-		public FF6Items NormalItem { get; set; }
+		public FF6Items NormalItems { get; set; }
+
+		[JsonPropertyName("ownedCharacterList")]
+		public String CharacterString { get; set; }
+
+		[JsonIgnore]
+		public FF6Characters Characters { get; set; }
 
 		[JsonExtensionData]
 		public IDictionary<String, JsonElement>? ExtensionData { get; set; }
 
 		public void Deserialize()
 		{
-			ImportantItem = JsonSerializer.Deserialize<FF6Items>(ImportantItemString);
-			ImportantItem.Deserialize();
-			NormalItem = JsonSerializer.Deserialize<FF6Items>(NormalItemString);
-			NormalItem.Deserialize();
+			ImportantItems = JsonSerializer.Deserialize<FF6Items>(ImportantItemString);
+			ImportantItems.Deserialize();
+			NormalItems = JsonSerializer.Deserialize<FF6Items>(NormalItemString);
+			NormalItems.Deserialize();
+			Characters = JsonSerializer.Deserialize<FF6Characters>(CharacterString);
+			Characters.Deserialize();
 		}
 
 		public void Serialize()
 		{
-			ImportantItem.Serialize();
-			ImportantItemString = JsonSerializer.Serialize(ImportantItem, FFSaveData.Options);
-			NormalItem.Serialize();
-			NormalItemString = JsonSerializer.Serialize(NormalItem, FFSaveData.Options);
+			ImportantItems.Serialize();
+			ImportantItemString = JsonSerializer.Serialize(ImportantItems, FFSaveData.Options);
+			NormalItems.Serialize();
+			NormalItemString = JsonSerializer.Serialize(NormalItems, FFSaveData.Options);
+			Characters.Serialize();
+			CharacterString = JsonSerializer.Serialize(Characters, FFSaveData.Options);
+		}
+	}
+
+	internal class FF6Characters
+	{
+		[JsonPropertyName("target")]
+		public List<String> TargetString { get; set; }
+
+		[JsonIgnore]
+		public ObservableCollection<FF6Character> Targets { get; set; } = new ObservableCollection<FF6Character>();
+
+		public void Deserialize()
+		{
+			foreach (var target in TargetString)
+			{
+				var character = JsonSerializer.Deserialize<FF6Character>(target);
+				character?.Deserialize();
+				Targets.Add(character);
+			}
+		}
+
+		public void Serialize()
+		{
+			TargetString.Clear();
+			foreach (var target in Targets)
+			{
+				target.Serialize();
+				TargetString.Add(JsonSerializer.Serialize(target, FFSaveData.Options));
+			}
+		}
+	}
+
+	internal class FF6Character
+	{
+		[JsonPropertyName("addtionalLevel")]
+		public uint Lv { get; set; }
+
+		[JsonPropertyName("name")]
+		public String Name { get; set; }
+
+		[JsonPropertyName("currentExp")]
+		public uint Exp { get; set; }
+
+		[JsonExtensionData]
+		public IDictionary<String, JsonElement>? ExtensionData { get; set; }
+
+		public void Deserialize()
+		{
+
+		}
+
+		public void Serialize()
+		{
+
 		}
 	}
 
@@ -103,22 +167,22 @@ namespace FFPixelRemaster
 		public List<String> TargetString { get; set; }
 
 		[JsonIgnore]
-		public ObservableCollection<FF6Item> Items { get; set; } = new ObservableCollection<FF6Item>();
+		public ObservableCollection<FF6Item> Targets { get; set; } = new ObservableCollection<FF6Item>();
 
 		public void Deserialize()
 		{
 			foreach (var target in TargetString)
 			{
-				Items.Add(JsonSerializer.Deserialize<FF6Item>(target));
+				Targets.Add(JsonSerializer.Deserialize<FF6Item>(target));
 			}
 		}
 
 		public void Serialize()
 		{
 			TargetString.Clear();
-			foreach (var item in Items)
+			foreach (var target in Targets)
 			{
-				TargetString.Add(JsonSerializer.Serialize(item, FFSaveData.Options));
+				TargetString.Add(JsonSerializer.Serialize(target, FFSaveData.Options));
 			}
 		}
 	}
