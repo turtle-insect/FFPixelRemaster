@@ -8,10 +8,12 @@ namespace FFPixelRemaster
 {
 	internal class ViewModel : INotifyPropertyChanged
 	{
+		public Info Info { get; set; } = Info.Instance();
 		public CommandAction FileOpenCommand { get; set; }
 		public CommandAction FileSaveCommand { get; set; }
 		public CommandAction FileImportCommand { get; set; }
 		public CommandAction FileExportCommand { get; set; }
+		public CommandAction ItemChoiceCommand { get; set; }
 		public CommandAction ItemAppendCommand { get; set; }
 
 		private FF6SaveData? mSaveData;
@@ -34,6 +36,7 @@ namespace FFPixelRemaster
 			FileSaveCommand = new CommandAction(FileSave);
 			FileImportCommand = new CommandAction(FileImport);
 			FileExportCommand = new CommandAction(FileExport);
+			ItemChoiceCommand = new CommandAction(ItemChoice);
 			ItemAppendCommand = new CommandAction(ItemAppend);
 		}
 
@@ -77,6 +80,17 @@ namespace FFPixelRemaster
 			if (dlg.ShowDialog() == false) return;
 
 			File.WriteAllText(dlg.FileName, SaveData.Save());
+		}
+
+		private void ItemChoice(object? obj)
+		{
+			var item = obj as FF6Item;
+			if (item == null) return;
+
+			var dlg = new ChoiceWindow();
+			dlg.ID = item.ID;
+			dlg.ShowDialog();
+			item.ID = dlg.ID;
 		}
 
 		private void ItemAppend(object? obj)

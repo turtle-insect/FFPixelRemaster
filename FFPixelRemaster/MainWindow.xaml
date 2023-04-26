@@ -4,12 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FFPixelRemaster"
+		xmlns:prop="clr-namespace:FFPixelRemaster.Properties"
         mc:Ignorable="d"
 		WindowStartupLocation="CenterScreen"
         Title="Switch Final Fantasy Pixel Remaster SaveDate Editor" Height="400" Width="600">
 	<Window.DataContext>
 		<local:ViewModel/>
 	</Window.DataContext>
+	<Window.Resources>
+		<local:ItemIDConverter x:Key="ItemIDConverter"/>
+	</Window.Resources>
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
@@ -21,6 +25,10 @@
 			</MenuItem>
 		</Menu>
 		<ToolBar DockPanel.Dock="Top">
+			<ComboBox SelectedIndex="{Binding Path=lang, Source={x:Static prop:Settings.Default}}">
+				<ComboBoxItem Content="English"/>
+				<ComboBoxItem Content="日本語"/>
+			</ComboBox>
 			<ComboBox SelectedIndex="0">
 				<ComboBoxItem Content="FF6"/>
 			</ComboBox>
@@ -85,8 +93,10 @@
 										<StackPanel Orientation="Horizontal">
 											<Label Content="Count"/>
 											<TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-											<Label Content="ID"/>
-											<TextBox Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+											<Button Content=" ... "
+													Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}, Path=DataContext.ItemChoiceCommand}"
+													CommandParameter="{Binding}"/>
+											<Label Content="{Binding ID, Converter={StaticResource ItemIDConverter}}"/>
 										</StackPanel>
 									</DataTemplate>
 								</ListBox.ItemTemplate>
@@ -103,8 +113,10 @@
 										<StackPanel Orientation="Horizontal">
 											<Label Content="Count"/>
 											<TextBox Text="{Binding Count, UpdateSourceTrigger=PropertyChanged}" Width="80"/>
-											<Label Content="ID"/>
-											<TextBox Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" Width="100"/>
+											<Button Content=" ... "
+													Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}, Path=DataContext.ItemChoiceCommand}"
+													CommandParameter="{Binding}"/>
+											<Label Content="{Binding ID, Converter={StaticResource ItemIDConverter}}"/>
 										</StackPanel>
 									</DataTemplate>
 								</ListBox.ItemTemplate>
