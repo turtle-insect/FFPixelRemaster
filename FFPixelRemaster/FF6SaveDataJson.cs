@@ -25,15 +25,19 @@ namespace FFPixelRemaster
 		public FF6UserData UserData { get; set; }
 
 		[JsonInclude, JsonIgnore]
-		public System.Windows.Media.ImageSource Thumbnail
+		public BitmapImage Thumbnail
 		{
 			get
 			{
 				var buffer = Convert.FromBase64String(ExtensionData?["pictureData"].GetString());
-				var decoder = new PngBitmapDecoder(new System.IO.MemoryStream(buffer),
-					BitmapCreateOptions.PreservePixelFormat,
-					BitmapCacheOption.Default);
-				return decoder.Frames[0];
+				using var ms = new MemoryStream(buffer);
+				var bitmap = new BitmapImage();
+				bitmap.BeginInit();
+				bitmap.StreamSource = ms;
+				bitmap.CacheOption = BitmapCacheOption.OnLoad;
+				bitmap.EndInit();
+				bitmap.Freeze();
+				return bitmap;
 			}
 		}
 
