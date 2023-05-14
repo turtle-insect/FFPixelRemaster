@@ -1,3 +1,5 @@
+![DL Count](https://img.shields.io/github/downloads/turtle-insect/FFPixelRemaster/total.svg)
+
 # 概要
 Switch Final Fantasy Pixel Remasterのセーブデータ編集Tool
 
